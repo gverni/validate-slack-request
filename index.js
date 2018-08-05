@@ -10,7 +10,8 @@ const querystring = require('querystring')
  *
  * @returns {boolean} Result of vlaidation
  */
-function validateSlackRequest (slackAppSigningSecret, httpReq, logging = false) {
+function validateSlackRequest (slackAppSigningSecret, httpReq, logging) {
+  logging = logging || false
   const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp')
   const SlackSignature = httpReq.get('X-Slack-Signature')
   const bodyPayload = querystring.stringify(httpReq.body)
