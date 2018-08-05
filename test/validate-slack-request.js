@@ -29,6 +29,8 @@ function getTestHttpRequest () {
   }
 }
 
+var testHttpRequest
+
 describe('Slack incoming request test', function () {
   describe('Basic test', function () {
     it('should return true with test object', function () {
@@ -38,41 +40,41 @@ describe('Slack incoming request test', function () {
 
   describe('Wrong signature', function () {
     it('should return false if the signature doesn\'t match', function () {
-      let tmpHttpReqTest = getTestHttpRequest()
-      tmpHttpReqTest['X-Slack-Signature'] = 'v0=a2114d57b58eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503'
-      assert.equal(slackValidateRequest(slackSigningSecret, tmpHttpReqTest), false)
+      testHttpRequest = getTestHttpRequest()
+      testHttpRequest['X-Slack-Signature'] = 'v0=a2114d57b58eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503'
+      assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
 
   describe('Wrong Signing Secret', function () {
     it('should return false if the signing secret is not the correct one', function () {
-      let tmpSlackSigningSecret = '9f742231b10e8888abcd99yyyzzz85a5'
+      var tmpSlackSigningSecret = '9f742231b10e8888abcd99yyyzzz85a5'
       assert.equal(slackValidateRequest(tmpSlackSigningSecret, getTestHttpRequest()), false)
     })
   })
 
   describe('Wrong Timestamp', function () {
     it('should return false if the timestamp is wrong', function () {
-      let tmpHttpReqTest = getTestHttpRequest()
-      tmpHttpReqTest['X-Slack-Request-Timestamp'] = '1531420619'
-      assert.equal(slackValidateRequest(slackSigningSecret, tmpHttpReqTest), false)
+      testHttpRequest = getTestHttpRequest()
+      testHttpRequest['X-Slack-Request-Timestamp'] = '1531420619'
+      assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
 
   describe('Wrong body', function () {
     it('should return false if the body is not the correct one', function () {
-      let tmpHttpReqTest = getTestHttpRequest()
-      tmpHttpReqTest.body.text = 'test'
-      assert.equal(slackValidateRequest(slackSigningSecret, tmpHttpReqTest), false)
+      testHttpRequest = getTestHttpRequest()
+      testHttpRequest.body.text = 'test'
+      assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
 
   describe('Using an invalid slack request', function () {
     it('should return false', function () {
-      let tmpHttpReqTest = getTestHttpRequest()
-      delete tmpHttpReqTest['X-Slack-Request-Timestamp']
-      delete tmpHttpReqTest['X-Slack-Signature']
-      assert.equal(slackValidateRequest(slackSigningSecret, tmpHttpReqTest), false)
+      testHttpRequest = getTestHttpRequest()
+      delete testHttpRequest['X-Slack-Request-Timestamp']
+      delete testHttpRequest['X-Slack-Signature']
+      assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
 })
