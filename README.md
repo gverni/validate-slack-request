@@ -34,10 +34,12 @@ const slackValidateRequest = require('validate-slack-request')
 (...) 
 
 router.post('/', function (req, res, next) {
-  if (validateSlackRequest(req, process.env.SLACK_APP_SIGNING_SECRET)) {
+  if (validateSlackRequest(process.env.SLACK_APP_SIGNING_SECRET, req)) {
     // Valid request - Send appropriate response 
     res.send(...)
   }
+  (...)
+}
 ```
     
 Above example assumes that the signing secret is stored in environment variable `SLACK_APP_SIGNING_SECRET` (hardcoding of this variable is not advised) 
