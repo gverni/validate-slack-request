@@ -2,7 +2,7 @@
 
 # validate-slack-request
 
-A simple module to validate Slack requests based on [this article](https://api.slack.com/docs/verifying-requests-from-slack). The module requires a valid expressJS request object as defined [here](https://expressjs.com/en/api.html#reqhttps://expressjs.com/en/api.html#req). See more about that in the [API section](API)
+A simple module to validate Slack requests based on [this article](https://api.slack.com/docs/verifying-requests-from-slack). The module requires a valid expressJS request object as defined [here](https://expressjs.com/en/api.html#reqhttps://expressjs.com/en/api.html#req). See more about that in the [API section](#api)
 
 Disclaimer: this module is not developed nor endorsed by Slack 
 
@@ -22,7 +22,7 @@ Where:
 * `httpReq`: Express request object as defined [here](https://expressjs.com/en/api.html#reqhttps://expressjs.com/en/api.html#req). If this module is used outside Express, make sure that `httpreq` exposes the following: 
   * `get()`: used to retrieve HTTP request headers (e.g. `httpReq.get('Content-Type')`)
   * `.body` : JSON object representing the body of the HTTP POST request.
-* `logging`: Optional variable (deault `false`) to print log information to console. 
+* `logging`: Optional parameter (default value is `false`) to print log information to console. 
 
 # Example
 
@@ -31,14 +31,14 @@ In express it can be added to your route using:
 ```
 const slackValidateRequest = require('validate-slack-request')
 
-(...) 
+... 
 
 router.post('/', function (req, res, next) {
   if (validateSlackRequest(process.env.SLACK_APP_SIGNING_SECRET, req)) {
     // Valid request - Send appropriate response 
     res.send(...)
   }
-  (...)
+  ...
 }
 ```
     
