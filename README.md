@@ -49,4 +49,4 @@ Above example assumes that the signing secret is stored in environment variable 
 Following errors are thrown when invalid arguments are passed: 
 
 * `Invalid slack app signing secret`: this error is thrown when the slack app signing secret (`slackAppSigningSecret`) is not a non-empty string. There is no check on actual validity of the app secret 
-* `Invalid type for logging. Provided ..., expected boolean`: this error is thrown when `logging` argument is provided not as boolean 
+* `Invalid type for logging. Provided ..., expected boolean`: this error is thrown when `logging` argument is not a boolean 
