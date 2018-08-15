@@ -77,4 +77,27 @@ describe('Slack incoming request test', function () {
       assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
+
+  describe('Using invalid slack app signing secret', function() {
+    it('should throw an error if it\'s undfined', function() {
+      testHttpRequest = getTestHttpRequest()
+      assert.throws(() => { slackValidateRequest(undefined, testHttpRequest) })
+    })
+    it('should throw an error if it\'s an empty string', function() {
+      testHttpRequest = getTestHttpRequest()
+      assert.throws(() => { slackValidateRequest('', testHttpRequest) })
+    })
+    it('should throw an error if it\'s a non-string', function() {
+      testHttpRequest = getTestHttpRequest()
+      assert.throws(() => { slackValidateRequest(12344, testHttpRequest) })
+    })
+  })
+
+  describe('Check validity of logging argument', function() {
+    it('should throw an error if logging is not a boolean', function() {
+      testHttpRequest = getTestHttpRequest()
+      assert.throws(() => { slackValidateRequest(slackSigningSecret, testHttpRequest, 1) })
+    })
+  })
+
 })
