@@ -12,6 +12,12 @@ const querystring = require('querystring')
  */
 function validateSlackRequest (slackAppSigningSecret, httpReq, logging) {
   logging = logging || false
+  if (typeof logging !== 'boolean') {
+    throw new Error('Invalid type for logging. Provided ' + typeof logging + ', expected boolean' )
+  }
+  if (!slackAppSigningSecret || typeof slackAppSigningSecret !== 'string' || slackAppSigningSecret === '') {
+    throw new Error('Invalid slack app signing secret')
+  }
   const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp')
   const SlackSignature = httpReq.get('X-Slack-Signature')
   const bodyPayload = querystring.stringify(httpReq.body)
