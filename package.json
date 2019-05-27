@@ -6,6 +6,10 @@
   "scripts": {
     "test": "mocha"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gverni/validate-slack-request"
+  },
   "keywords": [
     "slack",
     "express"
