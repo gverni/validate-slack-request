@@ -6,7 +6,7 @@ var assert = require('assert')
 // Test object. Simulate an express request object
 var slackSigningSecret = '8f742231b10e8888abcd99yyyzzz85a5'
 
-function getTestHttpRequest () {
+function getTestHttpRequest (textArgs) {
   return {
     'X-Slack-Request-Timestamp': '1531420618',
     'body': {
@@ -18,11 +18,11 @@ function getTestHttpRequest () {
       'user_id': 'U2CERLKJA',
       'user_name': 'roadrunner',
       'command': '/webhook-collect',
-      'text': '',
+      'text': textArgs || '',
       'response_url': 'https://hooks.slack.com/commands/T1DC2JH3J/397700885554/96rGlfmibIGlgcZRskXaIFfN',
       'trigger_id': '398738663015.47445629121.803a0bc887a14d10d2c447fce8b6703c'
     },
-    'X-Slack-Signature': 'v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503',
+    'X-Slack-Signature': textArgs ? 'v0=a3e650d30d1e91901834f91d048c9d3c0a50e4dcffcef7bc67884e95df8588ce' : 'v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503',
     get: function (element) {
       return this[element]
     }
@@ -35,6 +35,12 @@ describe('Slack incoming request test', function () {
   describe('Basic test', function () {
     it('should return true with test object', function () {
       assert.equal(slackValidateRequest(slackSigningSecret, getTestHttpRequest()), true)
+    })
+  })
+
+  describe('Test nultiple args', function () {
+    it('should return true', function () {
+      assert.equal(slackValidateRequest(slackSigningSecret, getTestHttpRequest('args1 args2')), true)
     })
   })
 
