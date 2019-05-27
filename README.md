@@ -12,6 +12,11 @@ To install use:
 
 ```$ npm install validate-slack-request```
 
+Since Slack is sending requests using a POST with `application/x-www-form-urlencoded` encoded payload, the `express.urlencoded` module needs to be enabled in Express in order to parse the POST payload. To enable it, add the following to your main express script (e.g. `app.js` or `server.js`)
+
+```javascript
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+```
 
 # API 
 
