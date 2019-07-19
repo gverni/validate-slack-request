@@ -4,8 +4,8 @@ const querystring = require('querystring')
 // Adhering to RFC 3986
 // Inspired from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
 function fixedEncodeURIComponent (str) {
-  return str.replace(/[!'()*]/g, function (c) {
-    return '%' + c.charCodeAt(0).toString(16)
+  return str.replace(/[!'()*~]/g, function (c) {
+    return '%' + c.charCodeAt(0).toString(16).toUpperCase()
   })
 }
 
