@@ -44,6 +44,14 @@ describe('Slack incoming request test', function () {
     })
   })
 
+  describe('Test special characters in command', function() {
+    it('should return true', function() {
+      testHttpRequest = getTestHttpRequest('(!)')
+      testHttpRequest['X-Slack-Signature'] = 'v0=85b7bd32a59380ae4a50db6d76eed906f36daec1660ceced4907f44eaaf60757'
+      assert.equal(slackValidateRequest('slackSigningSecret', testHttpRequest), true)
+    })
+  })
+
   describe('Wrong signature', function () {
     it('should return false if the signature doesn\'t match', function () {
       testHttpRequest = getTestHttpRequest()
@@ -105,5 +113,4 @@ describe('Slack incoming request test', function () {
       assert.throws(() => { slackValidateRequest(slackSigningSecret, testHttpRequest, 1) })
     })
   })
-
 })

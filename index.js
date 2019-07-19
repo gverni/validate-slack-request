@@ -1,6 +1,14 @@
 const crypto = require('crypto')
 const querystring = require('querystring')
 
+// Adhering to RFC 3986
+// Inspired from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+function fixedEncodeURIComponent (str) {
+  return str.replace(/[!'()*]/g, function (c) {
+    return '%' + c.charCodeAt(0).toString(16)
+  })
+}
+
 /**
  * Validate incoming Slack request
  *
@@ -20,7 +28,7 @@ function validateSlackRequest (slackAppSigningSecret, httpReq, logging) {
   }
   const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp')
   const SlackSignature = httpReq.get('X-Slack-Signature')
-  const bodyPayload = querystring.stringify(httpReq.body).replace(/%20/g, '+') // Fix for #1
+  const bodyPayload = fixedEncodeURIComponent(querystring.stringify(httpReq.body).replace(/%20/g, '+')) // Fix for #1
   if (!(xSlackRequestTimeStamp && SlackSignature && bodyPayload)) {
     if (logging) { console.log('Missing part in Slack\'s request') }
     return false
