@@ -116,7 +116,7 @@ describe('Slack incoming request test', function () {
   })
 
   describe('Using a http.ClientRequest for the request object', function() {
-    it('function normally', function() {
+    it('should function normally', function() {
       assert.equal(slackValidateRequest(slackSigningSecret, getTestHttpRequest(undefined, 'getHeader')), true)
     })
   })
