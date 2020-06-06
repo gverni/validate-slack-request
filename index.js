@@ -26,7 +26,7 @@ function validateSlackRequest (slackAppSigningSecret, httpReq, logging) {
   if (!slackAppSigningSecret || typeof slackAppSigningSecret !== 'string' || slackAppSigningSecret === '') {
     throw new Error('Invalid slack app signing secret')
   }
-  const get = httpReq.getHeader || httpReq.get // Fix for #5
+  const get = (httpReq.getHeader || httpReq.get).bind(httpReq) // Fix for #5
   const xSlackRequestTimeStamp = get('X-Slack-Request-Timestamp')
   const SlackSignature = get('X-Slack-Signature')
   const bodyPayload = fixedEncodeURIComponent(querystring.stringify(httpReq.body).replace(/%20/g, '+')) // Fix for #1
