@@ -6,9 +6,12 @@ var assert = require('assert')
 // Test object. Simulate an express request object
 var slackSigningSecret = '8f742231b10e8888abcd99yyyzzz85a5'
 
-function getTestHttpRequest (textArgs, get='get') {
+function getTestHttpRequest (textArgs, useGet=true) {
   var req = {
-    'X-Slack-Request-Timestamp': '1531420618',
+    'headers': {
+      'x-slack-request-timestamp': '1531420618',
+      'x-slack-signature': textArgs ? 'v0=a3e650d30d1e91901834f91d048c9d3c0a50e4dcffcef7bc67884e95df8588ce' : 'v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503',
+    },
     'body': {
       'token': 'xyzz0WbapA4vBCDEFasx0q6G',
       'team_id': 'T1DC2JH3J',
@@ -22,10 +25,11 @@ function getTestHttpRequest (textArgs, get='get') {
       'response_url': 'https://hooks.slack.com/commands/T1DC2JH3J/397700885554/96rGlfmibIGlgcZRskXaIFfN',
       'trigger_id': '398738663015.47445629121.803a0bc887a14d10d2c447fce8b6703c'
     },
-    'X-Slack-Signature': textArgs ? 'v0=a3e650d30d1e91901834f91d048c9d3c0a50e4dcffcef7bc67884e95df8588ce' : 'v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503',
   }
-  req[get] = function (element) {
-    return this[element]
+  if (useGet) {
+    req.get = function (element) {
+      return req['headers'][element.toLowerCase()]
+    }
   }
   return req
 }
@@ -48,7 +52,7 @@ describe('Slack incoming request test', function () {
   describe('Test special characters in command', function() {
     it('should return true', function() {
       testHttpRequest = getTestHttpRequest('(!)')
-      testHttpRequest['X-Slack-Signature'] = 'v0=85b7bd32a59380ae4a50db6d76eed906f36daec1660ceced4907f44eaaf60757'
+      testHttpRequest.headers['x-slack-signature'] = 'v0=85b7bd32a59380ae4a50db6d76eed906f36daec1660ceced4907f44eaaf60757'
       assert.equal(slackValidateRequest('slackSigningSecret', testHttpRequest), true)
     })
   })
@@ -56,7 +60,7 @@ describe('Slack incoming request test', function () {
   describe('Wrong signature', function () {
     it('should return false if the signature doesn\'t match', function () {
       testHttpRequest = getTestHttpRequest()
-      testHttpRequest['X-Slack-Signature'] = 'v0=a2114d57b58eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503'
+      testHttpRequest.headers['x-slack-signature'] = 'v0=a2114d57b58eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503'
       assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
@@ -71,7 +75,7 @@ describe('Slack incoming request test', function () {
   describe('Wrong Timestamp', function () {
     it('should return false if the timestamp is wrong', function () {
       testHttpRequest = getTestHttpRequest()
-      testHttpRequest['X-Slack-Request-Timestamp'] = '1531420619'
+      testHttpRequest.headers['x-slack-request-timestamp'] = '1531420619'
       assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
@@ -87,8 +91,8 @@ describe('Slack incoming request test', function () {
   describe('Using an invalid slack request', function () {
     it('should return false', function () {
       testHttpRequest = getTestHttpRequest()
-      delete testHttpRequest['X-Slack-Request-Timestamp']
-      delete testHttpRequest['X-Slack-Signature']
+      delete testHttpRequest.headers['x-slack-request-timestamp']
+      delete testHttpRequest.headers['x-slack-signature']
       assert.equal(slackValidateRequest(slackSigningSecret, testHttpRequest), false)
     })
   })
@@ -115,9 +119,9 @@ describe('Slack incoming request test', function () {
     })
   })
 
-  describe('Using a http.ClientRequest for the request object', function() {
+  describe('Using a http.IncomingMessage for the request object', function() {
     it('should function normally', function() {
-      assert.equal(slackValidateRequest(slackSigningSecret, getTestHttpRequest(undefined, 'getHeader')), true)
+      assert.equal(slackValidateRequest(slackSigningSecret, getTestHttpRequest(undefined, false)), true)
     })
   })
 })
