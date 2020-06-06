@@ -13,7 +13,7 @@ function fixedEncodeURIComponent (str) {
  * Validate incoming Slack request
  *
  * @param {string} slackAppSigningSecret - Slack application signing secret
- * @param {object} httpReq - Express request object
+ * @param {object} httpReq - http.ClientRequest or Express request object
  * @param {boolean} [logging=false] - Enable logging to console
  *
  * @returns {boolean} Result of vlaidation
@@ -26,8 +26,9 @@ function validateSlackRequest (slackAppSigningSecret, httpReq, logging) {
   if (!slackAppSigningSecret || typeof slackAppSigningSecret !== 'string' || slackAppSigningSecret === '') {
     throw new Error('Invalid slack app signing secret')
   }
-  const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp')
-  const SlackSignature = httpReq.get('X-Slack-Signature')
+  const get = httpReq.getHeader || httpReq.get // Fix for #5
+  const xSlackRequestTimeStamp = get('X-Slack-Request-Timestamp')
+  const SlackSignature = get('X-Slack-Signature')
   const bodyPayload = fixedEncodeURIComponent(querystring.stringify(httpReq.body).replace(/%20/g, '+')) // Fix for #1
   if (!(xSlackRequestTimeStamp && SlackSignature && bodyPayload)) {
     if (logging) { console.log('Missing part in Slack\'s request') }
