@@ -6,8 +6,8 @@ var assert = require('assert')
 // Test object. Simulate an express request object
 var slackSigningSecret = '8f742231b10e8888abcd99yyyzzz85a5'
 
-function getTestHttpRequest (textArgs) {
-  return {
+function getTestHttpRequest (textArgs, get='get') {
+  var req = {
     'X-Slack-Request-Timestamp': '1531420618',
     'body': {
       'token': 'xyzz0WbapA4vBCDEFasx0q6G',
@@ -23,10 +23,11 @@ function getTestHttpRequest (textArgs) {
       'trigger_id': '398738663015.47445629121.803a0bc887a14d10d2c447fce8b6703c'
     },
     'X-Slack-Signature': textArgs ? 'v0=a3e650d30d1e91901834f91d048c9d3c0a50e4dcffcef7bc67884e95df8588ce' : 'v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503',
-    get: function (element) {
-      return this[element]
-    }
   }
+  req[get] = function (element) {
+    return this[element]
+  }
+  return req
 }
 
 var testHttpRequest
@@ -111,6 +112,12 @@ describe('Slack incoming request test', function () {
     it('should throw an error if logging is not a boolean', function() {
       testHttpRequest = getTestHttpRequest()
       assert.throws(() => { slackValidateRequest(slackSigningSecret, testHttpRequest, 1) })
+    })
+  })
+
+  describe('Using a http.ClientRequest for the request object', function() {
+    it('function normally', function() {
+      assert.equal(slackValidateRequest(slackSigningSecret, getTestHttpRequest(undefined, 'getHeader')), true)
     })
   })
 })
