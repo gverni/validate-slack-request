@@ -1,7 +1,7 @@
 {
   "name": "validate-slack-request",
-  "version": "0.1.4",
-  "description": "A simple module to validate slack request in Express",
+  "version": "0.1.5",
+  "description": "A simple module to validate Slack requests",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
@@ -12,6 +12,7 @@
   },
   "keywords": [
     "slack",
+    "http",
     "express"
   ],
   "author": "gverni",

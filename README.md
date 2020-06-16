@@ -2,54 +2,66 @@
 
 # validate-slack-request
 
-A simple module to validate Slack requests based on [this article](https://api.slack.com/docs/verifying-requests-from-slack). The module requires a valid expressJS request object as defined [here](https://expressjs.com/en/api.html#reqhttps://expressjs.com/en/api.html#req). See more about that in the [API section](#api)
+A simple module to validate Slack requests passed in via an **Express**, **Next**, or a **Node.js** `http` endpoint handler function, based off of the specification included in [the official Slack guide](https://api.slack.com/docs/verifying-requests-from-slack) for request validation.
 
-Disclaimer: this module is not developed nor endorsed by Slack 
+**Disclaimer**: this module is not developed nor endorsed by Slack.
 
-# Installation 
-
-To install use: 
+## Installation
 
 ```$ npm install validate-slack-request```
 
-Since Slack is sending requests using a POST with `application/x-www-form-urlencoded` encoded payload, the `express.urlencoded` module needs to be enabled in Express in order to parse the POST payload. To enable it, add the following to your main express script (e.g. `app.js` or `server.js`)
+## Usage
 
 ```javascript
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+const validateSlackRequest = require('validateSlackRequest')
+
+const signSecret = process.env.SLACK_SIGNING_SECRET
+
+const endpointHandler = async (req, res) => { // ← your endpoint handler
+
+  const isValid = await validateSlackRequest(signSecret, req)
+
+  if (!isValid) {
+    // for Express & Next.js
+    res.status(403).send("Invalid Slack signing secret")
+    return
+
+    // for the Node.js http module
+    res.statusCode = 403
+    res.end("Invalid Slack signing secret")
+    return
+  }
+}
 ```
+### For Express Users
+If using Express, you must register the `express.urlencoded` middleware with your Express app:
+```javascript
+const express = require("express")
+const app = express()
+
+app.use(express.urlencoded({ extended: true })) // ← register it with your app
+```
+See the [API section](#API) below to learn more about why we require the `express.urlencoded` middleware.
 
 # API 
 
 ```validateSlackRequest (slackAppSigningSecret, httpReq, logging)```
 
-Where:
-* `slackAppSigningSecret`: this is the Slack Signing Secret assigned to the app when created. This can be accessed from the Slack app settings under "Basic Information". Look for "Signing secret". 
-* `httpReq`: Express request object as defined [here](https://expressjs.com/en/api.html#reqhttps://expressjs.com/en/api.html#req). If this module is used outside Express, make sure that `httpreq` exposes the following: 
-  * `get()`: used to retrieve HTTP request headers (e.g. `httpReq.get('Content-Type')`)
-  * `.body` : JSON object representing the body of the HTTP POST request.
+* `slackAppSigningSecret`: the [Slack Signing Secret](https://api.slack.com/authentication/verifying-requests-from-slack#about) assigned to your [Slack app](https://api.slack.com/authentication/verifying-requests-from-slack#about). We recommend storing this in an environment variable for security (see [Usage](#Usage) above).
+
+* `httpReq`: the `req` parameter passed to your endpoint handler function.
+  - for **Express** users, this is a [Request](https://expressjs.com/en/api.html#req) object**
+  - for **Node.js** `http` module users, this is an [IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage) object
+  - for **Next.js** users, this is a [_modified_ IncomingMessage](https://nextjs.org/docs/api-routes/introduction) object
+  - _don't see your framework here?_ [Open an Issue 😃](https://github.com/gverni/validate-slack-request/issues/new/choose)
+
 * `logging`: Optional parameter (default value is `false`) to print log information to console. 
 
-# Example
+### \** For Express Users
+Slack sends POST requests with an `application/x-www-form-urlencoded` encoded payload. **Express users** must register the `express.urlencoded` middleware with their Express app so that `validate-slack-request` can access that payload. See the sample code provided above under [Usage](#For-Express-Users) for guidance.
 
-In express it can be added to your route using: 
 
-```
-const slackValidateRequest = require('validate-slack-request')
-
-... 
-
-router.post('/', function (req, res, next) {
-  if (validateSlackRequest(process.env.SLACK_APP_SIGNING_SECRET, req)) {
-    // Valid request - Send appropriate response 
-    res.send(...)
-  }
-  ...
-}
-```
-    
-Above example assumes that the signing secret is stored in environment variable `SLACK_APP_SIGNING_SECRET` (hardcoding of this variable is not advised) 
-
-# Errors 
+### Errors 
 
 Following errors are thrown when invalid arguments are passed: 
 
