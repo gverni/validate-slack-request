@@ -17,7 +17,7 @@ function getBodyFromStream(httpReq) {
     httpReq.on('end', () => {
       resolve(bodyString)
     })
-    http.on('error', err => {
+    httpReq.on('error', err => {
       reject(err)
     })
   })
