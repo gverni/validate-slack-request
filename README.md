@@ -57,7 +57,7 @@ See the [API section](#API) below to learn more about why we require the `expres
 
 * `logging`: Optional parameter (default value is `false`) to print log information to console. 
 
-\** Slack sends POST requests with an `application/x-www-form-urlencoded` encoded payload. **Express users** must register the `express.urlencoded` middleware with their Express app so that `validate-slack-request` can access that payload. See the sample code provided above under [Usage](#Usage) for guidance.
+\** **For Express Users:** Slack sends POST requests with an `application/x-www-form-urlencoded` encoded payload. **Express users** must register the `express.urlencoded` middleware with their Express app so that `validate-slack-request` can access that payload. See the sample code provided above under [Usage](#Usage) for guidance.
 
 
 ### Errors 
