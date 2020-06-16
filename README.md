@@ -41,7 +41,7 @@ const app = express()
 
 app.use(express.urlencoded({ extended: true })) // ← register it with your app
 ```
-See the [API section](#API) below to learn more about why we require an additional middleware.
+See the [API section](#API) below to learn more about why we require the `express.urlencoded` middleware.
 
 # API 
 
