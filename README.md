@@ -24,6 +24,7 @@ const endpointHandler = async (req, res) => { // ← your endpoint handler
   if (!isValid) {
     // for Express & Next.js
     res.status(403).send("Invalid Slack signing secret")
+    return
 
     // for the Node.js http module
     res.statusCode = 403
