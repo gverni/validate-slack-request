@@ -2,7 +2,7 @@
 
 # validate-slack-request
 
-A simple module to validate Slack requests passed in via an Express, Next, or a Node.js `http` endpoint handler function, based off of the specification included in [the official Slack guide](https://api.slack.com/docs/verifying-requests-from-slack) for request validation.
+A simple module to validate Slack requests passed in via an **Express**, **Next**, or a **Node.js** `http` endpoint handler function, based off of the specification included in [the official Slack guide](https://api.slack.com/docs/verifying-requests-from-slack) for request validation.
 
 **Disclaimer**: this module is not developed nor endorsed by Slack.
 
