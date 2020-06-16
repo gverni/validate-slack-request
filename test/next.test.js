@@ -4,7 +4,7 @@
 
 const runTests = require('./util')
 
-function getTestHttpRequest (textArgs) {
+function getTestHttpRequest (textArgs, bodyChanges) {
   return {
     'headers': {
         'x-slack-request-timestamp': '1531420618',
@@ -21,7 +21,8 @@ function getTestHttpRequest (textArgs) {
       'command': '/webhook-collect',
       'text': textArgs || '',
       'response_url': 'https://hooks.slack.com/commands/T1DC2JH3J/397700885554/96rGlfmibIGlgcZRskXaIFfN',
-      'trigger_id': '398738663015.47445629121.803a0bc887a14d10d2c447fce8b6703c'
+      'trigger_id': '398738663015.47445629121.803a0bc887a14d10d2c447fce8b6703c',
+      ...bodyChanges
     },
   }
 }

@@ -60,8 +60,7 @@ function runTests(frameworkName, getTestHttpRequest) {
         
         describe('Wrong body', function () {
             it('should return false if the body is not the correct one', async function () {
-            testHttpRequest = getTestHttpRequest()
-            testHttpRequest.body.text = 'test'
+            testHttpRequest = getTestHttpRequest(undefined, { text: 'test' })
             assert.equal(await slackValidateRequest(slackSigningSecret, testHttpRequest), false)
             })
         })
